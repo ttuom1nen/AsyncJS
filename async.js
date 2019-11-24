@@ -19,7 +19,7 @@ promise
     throw Error;
     console.log(result2);
   })
-  .catch(() => console.log("Error"));
+  .catch(err => console.log("Error", err));
 
 // Fetch returns a promise
 fetch(urls[0])
@@ -31,11 +31,14 @@ Promise.all(
   urls.map(url => {
     return fetch(url).then(resp => resp.json());
   })
-).then(results => {
-  console.log(results[0]);
-  console.log(results[1]);
-  console.log(results[2]);
-});
+)
+  .then(results => {
+    console.log(results[0]);
+    console.log(results[1]);
+    console.log(results[2]);
+  })
+  .catch(err => console.log(err))
+  .finally(() => console.log("Finally fires regardless"));
 
 // Async Await
 async function fetchUsers() {
@@ -55,5 +58,16 @@ const getData = async function() {
     console.log(albums);
   } catch (err) {
     console.log("Error: ", err);
+  }
+};
+
+// Array of promises
+const getMoreData = async function() {
+  // Make an array of promises
+  const arrayOfPromises = urls.map(url => fetch(url));
+  // Loop through promises
+  for await (let request of arrayOfPromises) {
+    const data = await request.json();
+    console.log(data);
   }
 };
